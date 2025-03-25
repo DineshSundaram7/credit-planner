@@ -5,7 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 const BLOCK_TYPE = "BLOCK";
 
 // Course Block Component
-const CourseBlock = ({ course }) => {
+const CourseBlock = ({ course, removeCourse }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: BLOCK_TYPE,
     item: { id: course.id, course },
@@ -42,6 +42,9 @@ const CourseBlock = ({ course }) => {
               height: "100%",
             }}
           />
+          <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm">
+            {course.name} ({course.credits} Credits)
+          </div>
         </div>
       ) : (
         <div
@@ -50,15 +53,18 @@ const CourseBlock = ({ course }) => {
           {course.name} ({course.credits} Credits)
         </div>
       )}
-      <div className="absolute inset-0 flex items-center justify-center text-black font-bold text-sm">
-        {course.name} ({course.credits} Credits)
-      </div>
+      <button
+        onClick={() => removeCourse(course.id)}
+        className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full text-xs"
+      >
+        X
+      </button>
     </div>
   );
 };
 
 // Semester Drop Area
-const SemesterBlock = ({ semesterIndex, courses, moveBlock }) => {
+const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse }) => {
   const [, drop] = useDrop(() => ({
     accept: BLOCK_TYPE,
     drop: (item) => moveBlock(item.course, semesterIndex),
@@ -71,7 +77,7 @@ const SemesterBlock = ({ semesterIndex, courses, moveBlock }) => {
     <div ref={drop} className={`border p-4 min-h-[100px] bg-black text-white ${isOverLimit ? "border-red-500" : ""}`} style={{ width: "100%" }}>
       <h4 className="font-bold">Semester {semesterIndex + 1} ({totalCredits}/30 Credits)</h4>
       {courses.map((course) => (
-        <CourseBlock key={course.id} course={course} />
+        <CourseBlock key={course.id} course={course} removeCourse={removeCourse} />
       ))}
       {isOverLimit && <p className="text-red-500">Credit limit exceeded!</p>}
     </div>
@@ -130,6 +136,13 @@ const CreditPlanner = () => {
     });
   };
 
+  const removeCourse = (id) => {
+    setCourses(courses.filter((course) => course.id !== id));
+    setSemesters((prev) => {
+      return prev.map((sem) => sem.filter((course) => course.id !== id));
+    });
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex flex-col items-center">
@@ -152,7 +165,7 @@ const CreditPlanner = () => {
         </div>
         <div className="grid grid-cols-1 gap-4">
           {semesters.map((semester, index) => (
-            <SemesterBlock key={index} semesterIndex={index} courses={semester} moveBlock={moveBlock} />
+            <SemesterBlock key={index} semesterIndex={index} courses={semester} moveBlock={moveBlock} removeCourse={removeCourse} />
           ))}
         </div>
       </div>

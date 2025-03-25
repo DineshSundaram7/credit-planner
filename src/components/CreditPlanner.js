@@ -83,7 +83,7 @@ const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse, saveSe
         <CourseBlock key={course.id} course={course} removeCourse={removeCourse} />
       ))}
       {isOverLimit && <p className="text-red-500">Credit limit exceeded!</p>}
-      <button onClick={() => saveSemester(semesterIndex)} className="mt-2 bg-blue-500 text-white p-2 rounded">
+      <button onClick={() => saveSemester(semesterIndex)} className="mt-2 bg-white-500 text-black p-2 rounded">
         Save as Image
       </button>
     </div>

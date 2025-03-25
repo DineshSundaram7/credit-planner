@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import html2canvas from "html2canvas";
 
 const BLOCK_TYPE = "BLOCK";
 
@@ -20,8 +21,6 @@ const CourseBlock = ({ course, removeCourse }) => {
       className={`p-4 rounded-lg cursor-move m-2 transition-all duration-300 text-white relative ${isDragging ? "opacity-50" : ""}`}
       style={{
         width: `${course.credits * 40}px`,
-        whiteSpace: "normal",
-        wordWrap: "break-word",
         display: "flex",
         height: "100px",
       }}
@@ -48,7 +47,9 @@ const CourseBlock = ({ course, removeCourse }) => {
         </div>
       ) : (
         <div
-          className={`w-full h-full flex items-center justify-center ${course.type === "traditional" ? "bg-blue-500" : "bg-green-500"}`}
+          className={`w-full h-full flex items-center justify-center ${
+            course.type === "traditional" ? "bg-blue-500" : "bg-green-500"
+          }`}
         >
           {course.name} ({course.credits} Credits)
         </div>
@@ -64,7 +65,7 @@ const CourseBlock = ({ course, removeCourse }) => {
 };
 
 // Semester Drop Area
-const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse }) => {
+const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse, saveSemester }) => {
   const [, drop] = useDrop(() => ({
     accept: BLOCK_TYPE,
     drop: (item) => moveBlock(item.course, semesterIndex),
@@ -75,11 +76,16 @@ const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse }) => {
 
   return (
     <div ref={drop} className={`border p-4 min-h-[100px] bg-black text-white ${isOverLimit ? "border-red-500" : ""}`} style={{ width: "100%" }}>
-      <h4 className="font-bold">Semester {semesterIndex + 1} ({totalCredits}/30 Credits)</h4>
+      <h4 className="font-bold">
+        Semester {semesterIndex + 1} ({totalCredits}/30 Credits)
+      </h4>
       {courses.map((course) => (
         <CourseBlock key={course.id} course={course} removeCourse={removeCourse} />
       ))}
       {isOverLimit && <p className="text-red-500">Credit limit exceeded!</p>}
+      <button onClick={() => saveSemester(semesterIndex)} className="mt-2 bg-blue-500 text-white p-2 rounded">
+        Save as Image
+      </button>
     </div>
   );
 };
@@ -95,7 +101,7 @@ const CreditPlanner = () => {
   const [semesters, setSemesters] = useState([[], [], [], [], [], []]);
 
   const addCourse = () => {
-    if (type === "mixed" && (traditionalPercentage + projectPercentage !== 100)) {
+    if (type === "mixed" && traditionalPercentage + projectPercentage !== 100) {
       alert("The percentages for traditional and project-based must add up to 100.");
       return;
     }
@@ -138,9 +144,19 @@ const CreditPlanner = () => {
 
   const removeCourse = (id) => {
     setCourses(courses.filter((course) => course.id !== id));
-    setSemesters((prev) => {
-      return prev.map((sem) => sem.filter((course) => course.id !== id));
-    });
+    setSemesters((prev) => prev.map((sem) => sem.filter((course) => course.id !== id)));
+  };
+
+  const saveSemester = (semesterIndex) => {
+    const semesterDivs = document.getElementsByClassName("border p-4 min-h-[100px] bg-black text-white");
+    if (semesterDivs[semesterIndex]) {
+      html2canvas(semesterDivs[semesterIndex]).then((canvas) => {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/jpeg");
+        link.download = `Semester_${semesterIndex + 1}.jpg`;
+        link.click();
+      });
+    }
   };
 
   return (
@@ -161,11 +177,13 @@ const CreditPlanner = () => {
               <input type="number" value={projectPercentage} onChange={(e) => setProjectPercentage(Number(e.target.value))} min="0" max="100" className="border p-2" />
             </>
           )}
-          <button onClick={addCourse} className="bg-blue-500 text-white p-2 rounded">Add Course</button>
+          <button onClick={addCourse} className="bg-blue-500 text-white p-2 rounded">
+            Add Course
+          </button>
         </div>
         <div className="grid grid-cols-1 gap-4">
           {semesters.map((semester, index) => (
-            <SemesterBlock key={index} semesterIndex={index} courses={semester} moveBlock={moveBlock} removeCourse={removeCourse} />
+            <SemesterBlock key={index} semesterIndex={index} courses={semester} moveBlock={moveBlock} removeCourse={removeCourse} saveSemester={saveSemester} />
           ))}
         </div>
       </div>

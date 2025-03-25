@@ -21,7 +21,7 @@ const CourseBlock = ({ course }) => {
         course.type === "traditional" ? "bg-blue-500" : "bg-green-500"
       } ${isDragging ? "opacity-50" : ""}`}
       style={{
-        width: `${course.credits * 40}px`, 
+        width: `${course.credits * 40}px`,
         whiteSpace: "normal", // Allow text to wrap
         wordWrap: "break-word", // Break long words if necessary
       }}

@@ -81,7 +81,7 @@ const CreditPlanner = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex flex-col items-center">
-        <h2 className="text-xl font-bold mb-4">Plan Your Courses</h2>
+        <h2 className="text-xl font-bold mb-4">Bachelor program development</h2>
         <div className="flex gap-2 mb-4">
           <input
             type="text"
@@ -93,7 +93,7 @@ const CreditPlanner = () => {
           <input
             type="number"
             min="1"
-            max="10"
+            max="30"
             value={credits}
             onChange={(e) => setCredits(Number(e.target.value))}
             className="border p-2"

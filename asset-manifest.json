@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/credit-planner/static/css/main.1c588887.css",
+    "main.js": "/credit-planner/static/js/main.1d6bb9bd.js",
+    "static/js/453.cba4490a.chunk.js": "/credit-planner/static/js/453.cba4490a.chunk.js",
+    "index.html": "/credit-planner/index.html",
+    "main.1c588887.css.map": "/credit-planner/static/css/main.1c588887.css.map",
+    "main.1d6bb9bd.js.map": "/credit-planner/static/js/main.1d6bb9bd.js.map",
+    "453.cba4490a.chunk.js.map": "/credit-planner/static/js/453.cba4490a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1c588887.css",
+    "static/js/main.1d6bb9bd.js"
+  ]
+}

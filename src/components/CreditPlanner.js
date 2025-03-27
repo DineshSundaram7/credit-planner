@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import html2canvas from "html2canvas";
+import * as XLSX from "xlsx";
 
 const BLOCK_TYPE = "BLOCK";
 
@@ -30,14 +31,14 @@ const CourseBlock = ({ course, removeCourse }) => {
           <div
             style={{
               width: `${course.traditionalPercentage}%`,
-              backgroundColor: "green",
+              backgroundColor: "blue",
               height: "100%",
             }}
           />
           <div
             style={{
               width: `${course.projectPercentage}%`,
-              backgroundColor: "blue",
+              backgroundColor: "green",
               height: "100%",
             }}
           />
@@ -159,6 +160,39 @@ const CreditPlanner = () => {
     }
   };
 
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target.result;
+      const workbook = XLSX.read(data, { type: "binary" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
+
+      json.forEach((courseData) => {
+        const { Name, Credits, Type, TraditionalPercentage, ProjectPercentage } = courseData;
+        const newCourse = {
+          id: courses.length,
+          name: Name,
+          credits: Credits,
+          type: Type || "traditional",
+          traditionalPercentage: Type === "mixed" ? TraditionalPercentage : 0,
+          projectPercentage: Type === "mixed" ? ProjectPercentage : 0,
+        };
+        setCourses((prevCourses) => [...prevCourses, newCourse]);
+        setSemesters((prev) => {
+          const updatedSemesters = [...prev];
+          updatedSemesters[0] = [...updatedSemesters[0], newCourse];
+          return updatedSemesters;
+        });
+      });
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex flex-col items-center">
@@ -166,29 +200,4 @@ const CreditPlanner = () => {
         <div className="flex gap-2 mb-4">
           <input type="text" placeholder="Course Name" value={courseName} onChange={(e) => setCourseName(e.target.value)} className="border p-2" />
           <input type="number" min="1" max="30" value={credits} onChange={(e) => setCredits(Number(e.target.value))} className="border p-2" />
-          <select value={type} onChange={(e) => setType(e.target.value)} className="border p-2">
-            <option value="traditional">Traditional</option>
-            <option value="project">Project-Based</option>
-            <option value="mixed">Mixed</option>
-          </select>
-          {type === "mixed" && (
-            <>
-              <input type="number" value={traditionalPercentage} onChange={(e) => setTraditionalPercentage(Number(e.target.value))} min="0" max="100" className="border p-2" />
-              <input type="number" value={projectPercentage} onChange={(e) => setProjectPercentage(Number(e.target.value))} min="0" max="100" className="border p-2" />
-            </>
-          )}
-          <button onClick={addCourse} className="bg-blue-500 text-white p-2 rounded">
-            Add Course
-          </button>
-        </div>
-        <div className="grid grid-cols-1 gap-4">
-          {semesters.map((semester, index) => (
-            <SemesterBlock key={index} semesterIndex={index} courses={semester} moveBlock={moveBlock} removeCourse={removeCourse} saveSemester={saveSemester} />
-          ))}
-        </div>
-      </div>
-    </DndProvider>
-  );
-};
-
-export default CreditPlanner;
+          <select value={type} on

@@ -48,9 +48,7 @@ const CourseBlock = ({ course, removeCourse }) => {
         </div>
       ) : (
         <div
-          className={`w-full h-full flex items-center justify-center ${
-            course.type === "traditional" ? "bg-blue-500" : "bg-green-500"
-          }`}
+          className={`w-full h-full flex items-center justify-center ${course.type === "traditional" ? "bg-blue-500" : "bg-green-500"}`}
         >
           {course.name} ({course.credits} Credits)
         </div>
@@ -200,4 +198,53 @@ const CreditPlanner = () => {
         <div className="flex gap-2 mb-4">
           <input type="text" placeholder="Course Name" value={courseName} onChange={(e) => setCourseName(e.target.value)} className="border p-2" />
           <input type="number" min="1" max="30" value={credits} onChange={(e) => setCredits(Number(e.target.value))} className="border p-2" />
-          <select value={type} on
+          <select value={type} onChange={(e) => setType(e.target.value)} className="border p-2">
+            <option value="traditional">Traditional</option>
+            <option value="project">Project-Based</option>
+            <option value="mixed">Mixed</option>
+          </select>
+          {type === "mixed" && (
+            <div className="flex gap-2">
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={traditionalPercentage}
+                onChange={(e) => setTraditionalPercentage(Number(e.target.value))}
+                className="border p-2"
+                placeholder="Traditional %"
+              />
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={projectPercentage}
+                onChange={(e) => setProjectPercentage(Number(e.target.value))}
+                className="border p-2"
+                placeholder="Project %"
+              />
+            </div>
+          )}
+          <button onClick={addCourse} className="bg-blue-500 text-white p-2 rounded">
+            Add Course
+          </button>
+        </div>
+        <input type="file" accept=".xlsx" onChange={handleFileUpload} className="mb-4" />
+        <div className="flex gap-4">
+          {semesters.map((coursesInSemester, index) => (
+            <SemesterBlock
+              key={index}
+              semesterIndex={index}
+              courses={coursesInSemester}
+              moveBlock={moveBlock}
+              removeCourse={removeCourse}
+              saveSemester={saveSemester}
+            />
+          ))}
+        </div>
+      </div>
+    </DndProvider>
+  );
+};
+
+export default CreditPlanner;

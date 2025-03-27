@@ -7,10 +7,10 @@ const BLOCK_TYPE = "BLOCK";
 
 // Predefined Courses List
 const predefinedCourses = [
-  { id: 1, name: "Mathematics" },
-  { id: 2, name: "Physics" },
-  { id: 3, name: "Chemistry" },
-  { id: 4, name: "Software Engineering" },
+  { id: 1, name: "Mathematics", credits: 4, type: "traditional" },
+  { id: 2, name: "Physics", credits: 3, type: "traditional" },
+  { id: 3, name: "Chemistry", credits: 3, type: "project" },
+  { id: 4, name: "Software Engineering", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
 ];
 
 // Course Block Component
@@ -139,11 +139,13 @@ const CreditPlanner = () => {
 
   // Function to copy from predefined courses
   const copyFromPredefined = (course) => {
-    setCourseName(course.name); // Only copy the name
-    setCredits(1); // Default to 1 credit for simplicity
-    setType("traditional"); // Default to "traditional"
-    setTraditionalPercentage(50);
-    setProjectPercentage(50);
+    setCourseName(course.name);
+    setCredits(course.credits);
+    setType(course.type);
+    if (course.type === "mixed") {
+      setTraditionalPercentage(course.traditionalPercentage || 50);
+      setProjectPercentage(course.projectPercentage || 50);
+    }
   };
 
   // Move a course block to another semester
@@ -184,7 +186,7 @@ const CreditPlanner = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex flex-col items-center">
         <h2 className="text-xl font-bold mb-4">Plan Your Courses</h2>
-
+        
         {/* Predefined Courses Section */}
         <div className="mb-4">
           <h3 className="text-lg">Predefined Courses</h3>
@@ -233,8 +235,8 @@ const CreditPlanner = () => {
           <button onClick={addCourse} className="bg-blue-500 text-white p-2 rounded">Add Course</button>
         </div>
 
-        {/* Semester Blocks */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+        {/* Semester Display */}
+        <div className="flex gap-4">
           {semesters.map((courses, index) => (
             <SemesterBlock
               key={index}

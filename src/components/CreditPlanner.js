@@ -236,7 +236,7 @@ const CreditPlanner = () => {
         </div>
 
         {/* Semester Display */}
-        <div className="flex gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {semesters.map((courses, index) => (
             <SemesterBlock
               key={index}

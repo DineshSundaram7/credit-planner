@@ -7,20 +7,48 @@ const BLOCK_TYPE = "BLOCK";
 
 // Predefined Courses by Category
 const predefinedCoursesByCategory = {
-  "Category 1": [
+  "Foundation courses": [
     { id: 1, name: "Algebra", credits: 4, type: "traditional" },
-    { id: 2, name: "Physics", credits: 3, type: "traditional" },
+    { id: 2, name: "Calculus", credits: 3, type: "traditional" },
+    { id: 3, name: "Mechanics", credits: 3, type: "traditional" },
+    { id: 4, name: "Solid mechanics", credits: 3, type: "traditional" },
+    { id: 5, name: "Thermodynamics", credits: 3, type: "traditional" },
+    { id: 6, name: "Metrology/measurement", credits: 3, type: "traditional" },
+    { id: 7, name: "Chemical equlibrium", credits: 3, type: "traditional" },
   ],
-  "Category 2": [
-    { id: 3, name: "Chemistry", credits: 3, type: "project" },
+  "Materials and Manufacturing courses": [
+    { id: 8, name: "Materials & Manufacturing", credits: 3, type: "project" },
+    { id: 9, name: "Component Manufacturing & Manufacturing processes", credits: 3, type: "project" },
+    { id: 10, name: "Materials & component characterisation", credits: 3, type: "project" },
+    { id: 11, name: "Sustainable Materials & Process selection", credits: 3, type: "project" },
+    { id: 12, name: "Diffusion & Phase Change", credits: 3, type: "project" },
+    { id: 13, name: "Fluid mechanics", credits: 3, type: "project" },
   ],
-  "Category 3": [
-    { id: 4, name: "Software Engineering", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+  "Advanced Materials": [
+    { id: 14, name: "Science of remelting", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+      { id: 15, name: "Solidification", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+      { id: 16, name: "Cast Metal components", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+      { id: 17, name: "Polymer moulding components", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+      { id: 18, name: "Surface technology/Corrosion", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
   ],
-  "Category 4": [
-    { id: 5, name: "Data Structures", credits: 4, type: "traditional" },
-    { id: 6, name: "Machine Learning", credits: 4, type: "project" },
+  "Project/Group/Leadership courses": [
+    { id: 19, name: "Mentor driven activities", credits: 4, type: "traditional" },
+    { id: 20, name: "Project based learning skills", credits: 4, type: "project" },
   ],
+  "General courses": [
+    { id: 21, name: "Ethics", credits: 4, type: "traditional" },
+    { id: 22, name: "Theory of Science", credits: 4, type: "project" },
+    { id: 23, name: "Project Management & Leadership", credits: 4, type: "project" },
+    { id: 24, name: "Entrepreneurship, Innovation processes & startups ", credits: 4, type: "project" },
+        { id: 25, name: "Business economics", credits: 4, type: "project" },
+      ],
+  "Engineering tools/software/simulation tool courses": [
+    { id: 26, name: "Programming (Python, Matlab)", credits: 4, type: "traditional" },
+    { id: 27, name: "A.I. and applications", credits: 4, type: "project" },
+      { id: 28, name: "Problem solving with Machine Learning", credits: 4, type: "traditional" },
+      { id: 29, name: "C.A.D basics", credits: 4, type: "traditional" },
+      { id: 30, name: "Simulation", credits: 4, type: "traditional" },
+      ],
 };
 
 // Course Block Component

@@ -5,13 +5,23 @@ import html2canvas from "html2canvas";
 
 const BLOCK_TYPE = "BLOCK";
 
-// Predefined Courses List
-const predefinedCourses = [
-  { id: 1, name: "Algebra", credits: 4, type: "traditional" },
-  { id: 2, name: "Physics", credits: 3, type: "traditional" },
-  { id: 3, name: "Chemistry", credits: 3, type: "project" },
-  { id: 4, name: "Software Engineering", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
-];
+// Predefined Courses by Category
+const predefinedCoursesByCategory = {
+  "Category 1": [
+    { id: 1, name: "Algebra", credits: 4, type: "traditional" },
+    { id: 2, name: "Physics", credits: 3, type: "traditional" },
+  ],
+  "Category 2": [
+    { id: 3, name: "Chemistry", credits: 3, type: "project" },
+  ],
+  "Category 3": [
+    { id: 4, name: "Software Engineering", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+  ],
+  "Category 4": [
+    { id: 5, name: "Data Structures", credits: 4, type: "traditional" },
+    { id: 6, name: "Machine Learning", credits: 4, type: "project" },
+  ],
+};
 
 // Course Block Component
 const CourseBlock = ({ course, removeCourse }) => {
@@ -55,9 +65,7 @@ const CourseBlock = ({ course, removeCourse }) => {
         </div>
       ) : (
         <div
-          className={`w-full h-full flex items-center justify-center ${
-            course.type === "traditional" ? "bg-blue-500" : "bg-green-500"
-          }`}
+          className={`w-full h-full flex items-center justify-center ${course.type === "traditional" ? "bg-blue-500" : "bg-green-500"}`}
         >
           {course.name} ({course.credits} Credits)
         </div>
@@ -196,27 +204,31 @@ const CreditPlanner = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex flex-col items-center">
         <h2 className="text-xl font-bold mb-4">Bachelor program development</h2>
-        
-        {/* Predefined Courses Section */}
-        <div className="mb-4">
-          <h3 className="text-lg">Existing courses</h3>
-          <div className="flex gap-2">
-            {predefinedCourses.map((course) => (
-              <button
-                key={course.id}
-                onClick={() => copyFromPredefined(course)}
-                className="bg-gray-300 text-black p-2 rounded"
-              >
-                {course.name}
-              </button>
-            ))}
-          </div>
+
+        {/* Categories with Predefined Courses */}
+        <div className="w-full">
+          {Object.keys(predefinedCoursesByCategory).map((category) => (
+            <div key={category} className="mb-6">
+              <h3 className="text-lg font-bold">{category}</h3>
+              <div className="flex gap-2 flex-wrap">
+                {predefinedCoursesByCategory[category].map((course) => (
+                  <button
+                    key={course.id}
+                    onClick={() => copyFromPredefined(course)}
+                    className="bg-gray-300 text-black p-2 rounded"
+                  >
+                    {course.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Course Creation Form */}
         <div className="flex gap-2 mb-4">
           <input type="text" placeholder="Course Name" value={courseName} onChange={(e) => setCourseName(e.target.value)} className="border p-2" />
-          <input type="number" min="1" max="30" value={credits} onChange={(e) => setCredits(Number(e.target.value))} className="border p-2" />
+          <input type="number" min="1" value={credits} onChange={(e) => setCredits(Number(e.target.value))} className="border p-2" />
           <select value={type} onChange={(e) => setType(e.target.value)} className="border p-2">
             <option value="traditional">Traditional</option>
             <option value="project">Project</option>
@@ -224,34 +236,20 @@ const CreditPlanner = () => {
           </select>
           {type === "mixed" && (
             <div className="flex gap-2">
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={traditionalPercentage}
-                onChange={(e) => setTraditionalPercentage(Number(e.target.value))}
-                className="border p-2"
-              />
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={projectPercentage}
-                onChange={(e) => setProjectPercentage(Number(e.target.value))}
-                className="border p-2"
-              />
+              <input type="number" min="0" max="100" value={traditionalPercentage} onChange={(e) => setTraditionalPercentage(Number(e.target.value))} className="border p-2" />
+              <input type="number" min="0" max="100" value={projectPercentage} onChange={(e) => setProjectPercentage(Number(e.target.value))} className="border p-2" />
             </div>
           )}
-          <button onClick={addCourse} className="bg-green-500 text-white p-2 rounded">Add Course</button>
+          <button onClick={addCourse} className="bg-blue-500 text-white p-2 rounded">Add Course</button>
         </div>
 
         {/* Semester Blocks */}
-        <div className="grid grid-cols-1 gap-4">
-          {semesters.map((semester, index) => (
+        <div className="flex gap-4 flex-wrap justify-center">
+          {semesters.map((courses, index) => (
             <SemesterBlock
               key={index}
               semesterIndex={index}
-              courses={semester}
+              courses={courses}
               moveBlock={moveBlock}
               removeCourse={removeCourse}
               saveSemester={saveSemester}

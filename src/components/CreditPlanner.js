@@ -7,7 +7,7 @@ const BLOCK_TYPE = "BLOCK";
 
 // Predefined Courses List
 const predefinedCourses = [
-  { id: 1, name: "Mathematics", credits: 4, type: "traditional" },
+  { id: 1, name: "Algebra", credits: 4, type: "traditional" },
   { id: 2, name: "Physics", credits: 3, type: "traditional" },
   { id: 3, name: "Chemistry", credits: 3, type: "project" },
   { id: 4, name: "Software Engineering", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },

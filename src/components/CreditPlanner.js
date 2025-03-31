@@ -195,7 +195,7 @@ const CreditPlanner = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex flex-col items-center">
-        <h2 className="text-xl font-bold mb-4">Plan Your Courses</h2>
+        <h2 className="text-xl font-bold mb-4">Bachelor program development</h2>
         
         {/* Predefined Courses Section */}
         <div className="mb-4">

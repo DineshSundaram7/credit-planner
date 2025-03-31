@@ -83,7 +83,12 @@ const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse, saveSe
   const isOverLimit = totalCredits > 30;
 
   return (
-    <div ref={drop} className={`border p-4 min-h-[100px] bg-black text-white ${isOverLimit ? "border-red-500" : ""}`} style={{ width: "100%" }}>
+    <div
+      id={`semester-${semesterIndex}`} // Added id for each semester block
+      ref={drop}
+      className={`border p-4 min-h-[100px] bg-black text-white ${isOverLimit ? "border-red-500" : ""}`}
+      style={{ width: "100%" }}
+    >
       <h4 className="font-bold">
         Semester {semesterIndex + 1} ({totalCredits}/30 Credits)
       </h4>
@@ -91,7 +96,10 @@ const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse, saveSe
         <CourseBlock key={course.id} course={course} removeCourse={removeCourse} />
       ))}
       {isOverLimit && <p className="text-red-500">Credit limit exceeded!</p>}
-      <button onClick={() => saveSemester(semesterIndex)} className="mt-2 bg-white-500 text-black p-2 rounded">
+      <button
+        onClick={() => saveSemester(semesterIndex)} // Save button triggers image save
+        className="mt-2 bg-white text-black p-2 rounded"
+      >
         Save as Image
       </button>
     </div>
@@ -171,14 +179,16 @@ const CreditPlanner = () => {
 
   // Save the semester as an image
   const saveSemester = (semesterIndex) => {
-    const semesterDivs = document.getElementsByClassName("border p-4 min-h-[100px] bg-black text-white");
-    if (semesterDivs[semesterIndex]) {
-      html2canvas(semesterDivs[semesterIndex]).then((canvas) => {
+    const semesterElement = document.getElementById(`semester-${semesterIndex}`);
+    if (semesterElement) {
+      html2canvas(semesterElement, { backgroundColor: "#000", scale: 2 }).then((canvas) => {
         const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/jpeg");
-        link.download = `Semester_${semesterIndex + 1}.jpg`;
-        link.click();
+        link.href = canvas.toDataURL("image/png");
+        link.download = `Semester_${semesterIndex + 1}.png`;
+        link.click(); // Trigger download
       });
+    } else {
+      alert("Semester block not found!");
     }
   };
 
@@ -232,16 +242,16 @@ const CreditPlanner = () => {
               />
             </div>
           )}
-          <button onClick={addCourse} className="bg-blue-500 text-white p-2 rounded">Add Course</button>
+          <button onClick={addCourse} className="bg-green-500 text-white p-2 rounded">Add Course</button>
         </div>
 
-        {/* Semester Display */}
-        <div className="grid grid-cols-1 gap-4">
-          {semesters.map((courses, index) => (
+        {/* Semester Blocks */}
+        <div className="flex gap-4">
+          {semesters.map((semester, index) => (
             <SemesterBlock
               key={index}
               semesterIndex={index}
-              courses={courses}
+              courses={semester}
               moveBlock={moveBlock}
               removeCourse={removeCourse}
               saveSemester={saveSemester}

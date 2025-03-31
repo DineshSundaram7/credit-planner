@@ -199,7 +199,7 @@ const CreditPlanner = () => {
         
         {/* Predefined Courses Section */}
         <div className="mb-4">
-          <h3 className="text-lg">Predefined Courses</h3>
+          <h3 className="text-lg">Existing courses</h3>
           <div className="flex gap-2">
             {predefinedCourses.map((course) => (
               <button

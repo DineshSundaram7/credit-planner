@@ -256,7 +256,7 @@ const CreditPlanner = () => {
         {/* Course Creation Form */}
         <div className="flex gap-2 mb-4">
           <input type="text" placeholder="Course Name" value={courseName} onChange={(e) => setCourseName(e.target.value)} className="border p-2" />
-          <input type="number" placeholder="Credits" min="1" value={credits} onChange={(e) => setCredits(Number(e.target.value))} className="border p-2" />
+          <input type="number" placeholder="Credits" min="1" step="0.1" value={credits} onChange={(e) => setCredits(parseFloat(e.target.value) || 0)} className="border p-2" />
           <select value={type} onChange={(e) => setType(e.target.value)} className="border p-2">
             <option value="traditional">Traditional</option>
             <option value="project">Project</option>

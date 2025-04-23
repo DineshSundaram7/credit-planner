@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const BLOCK_TYPE = "BLOCK";
 
@@ -26,10 +27,10 @@ const predefinedCoursesByCategory = {
   ],
   "Advanced Materials": [
     { id: 14, name: "Science of remelting", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
-      { id: 15, name: "Solidification", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
-      { id: 16, name: "Cast Metal components", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
-      { id: 17, name: "Polymer moulding components", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
-      { id: 18, name: "Surface technology/Corrosion", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+    { id: 15, name: "Solidification", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+    { id: 16, name: "Cast Metal components", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+    { id: 17, name: "Polymer moulding components", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
+    { id: 18, name: "Surface technology/Corrosion", credits: 4, type: "mixed", traditionalPercentage: 50, projectPercentage: 50 },
   ],
   "Project/Group/Leadership courses": [
     { id: 19, name: "Mentor driven activities", credits: 4, type: "traditional" },
@@ -40,15 +41,15 @@ const predefinedCoursesByCategory = {
     { id: 22, name: "Theory of Science", credits: 4, type: "project" },
     { id: 23, name: "Project Management & Leadership", credits: 4, type: "project" },
     { id: 24, name: "Entrepreneurship, Innovation processes & startups ", credits: 4, type: "project" },
-        { id: 25, name: "Business economics", credits: 4, type: "project" },
-      ],
+    { id: 25, name: "Business economics", credits: 4, type: "project" },
+  ],
   "Engineering tools/software/simulation tool courses": [
     { id: 26, name: "Programming (Python, Matlab)", credits: 4, type: "traditional" },
     { id: 27, name: "A.I. and applications", credits: 4, type: "project" },
-      { id: 28, name: "Problem solving with Machine Learning", credits: 4, type: "traditional" },
-      { id: 29, name: "C.A.D basics", credits: 4, type: "traditional" },
-      { id: 30, name: "Simulation", credits: 4, type: "traditional" },
-      ],
+    { id: 28, name: "Problem solving with Machine Learning", credits: 4, type: "traditional" },
+    { id: 29, name: "C.A.D basics", credits: 4, type: "traditional" },
+    { id: 30, name: "Simulation", credits: 4, type: "traditional" },
+  ],
 };
 
 // Course Block Component
@@ -120,7 +121,7 @@ const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse, saveSe
 
   return (
     <div
-      id={`semester-${semesterIndex}`} // Added id for each semester block
+      id={`semester-${semesterIndex}`}
       ref={drop}
       className={`border p-4 min-h-[100px] bg-black text-white ${isOverLimit ? "border-red-500" : ""}`}
       style={{ width: "100%" }}
@@ -133,7 +134,7 @@ const SemesterBlock = ({ semesterIndex, courses, moveBlock, removeCourse, saveSe
       ))}
       {isOverLimit && <p className="text-red-500">Credit limit exceeded!</p>}
       <button
-        onClick={() => saveSemester(semesterIndex)} // Save button triggers image save
+        onClick={() => saveSemester(semesterIndex)}
         className="mt-2 bg-white text-black p-2 rounded"
       >
         Save as Image
@@ -221,10 +222,41 @@ const CreditPlanner = () => {
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `Semester_${semesterIndex + 1}.png`;
-        link.click(); // Trigger download
+        link.click();
       });
     } else {
       alert("Semester block not found!");
+    }
+  };
+
+  // Save the entire page as a PDF
+  const savePageAsPDF = () => {
+    const pageElement = document.body; // Capture the entire page
+    if (pageElement) {
+      html2canvas(pageElement, { scale: 2, useCORS: true }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Handle multi-page PDFs if content exceeds one page
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        pdf.save("Credit_Planner.pdf");
+      });
+    } else {
+      alert("Page content not found!");
     }
   };
 
@@ -232,6 +264,14 @@ const CreditPlanner = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex flex-col items-center">
         <h2 className="text-xl font-bold mb-4">Bachelor program development</h2>
+
+        {/* Save Page as PDF Button */}
+        <button
+          onClick={savePageAsPDF}
+          className="mb-4 bg-purple-500 text-white p-2 rounded"
+        >
+          Save Page as PDF
+        </button>
 
         {/* Categories with Predefined Courses */}
         <div className="w-full">
